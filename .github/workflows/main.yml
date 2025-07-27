@@ -1,0 +1,35 @@
+name: UI Automation Test - Cucumber + Selenium
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  run-ui-tests:
+    name: Run Cucumber UI Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'  
+
+      - name: Give permission to Gradle wrapper
+        run: chmod +x ./gradlew
+
+      - name: Run tests with Gradle
+        run: ./gradlew clean test
+
+      - name: Upload Cucumber Reports (HTML)
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cucumber-html-report
+          path: build/reports/tests/test  
